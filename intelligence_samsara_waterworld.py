@@ -1,28 +1,33 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import numpy as np
+import environment_interface as env_interface
 
 from ple import PLE
 from ple.games.waterworld import WaterWorld
 
-from perleik.experiment_setup import EXPERIMENT
-            # PARAMETERS -- experiment parameters
-            config['EXPERIMENT'] = {}
-            fps = 50
-            config['EXPERIMENT']['time_horizon'] = str(TIME_HORIZON)
-            config['EXPERIMENT']['fps'] = str(fps)  # '50'
-            config['EXPERIMENT']['bin_size_4_digsig'] = str(int(fps/5))  # '10'
-            config['EXPERIMENT']['show_display'] = str(SHOW_DISPLAY)
-            config['EXPERIMENT']['world_side_length'] = '250'
-            config['EXPERIMENT']['number_of_creeps'] = str(NUMBER_OF_CREEPS)
-            config['EXPERIMENT']['print_progress'] = 'False'
-            config['EXPERIMENT']['forsøk_nummer_eoi'] = str(FORSØK_NUMMER_EoI)
-            config['EXPERIMENT']['recursive_factor_eoi'] = str(RECURSIVE_FACTOR_EoI)
-            config['EXPERIMENT']['factor_for_loke_value_function'] = str(FACTOR_FOR_Loke_VALUE_FUNCTION)
+import numpy as np
 
+import h5py
 
+PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
+PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
 
-# +# Her definerer eg at 'win' ikkje fører til ekstra reward!
+TIME_HORIZON = 10000
+NUMBER_OF_CREEPS = 4
+PRINT_PROGRESS = False
+# from perleik.experiment_setup import EXPERIMENT
+# PARAMETERS -- experiment parameters
+config['EXPERIMENT'] = {}       # TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+fps = 50
+EXPERIMENT['time_horizon'] = TIME_HORIZON
+EXPERIMENT['fps'] = 50
+EXPERIMENT['bin_size_4_digsig'] = int(fps/5)  # '10'
+EXPERIMENT['show_display'] = True
+EXPERIMENT['world_side_length'] = 250
+EXPERIMENT['number_of_creeps'] = 4
+EXPERIMENT['print_progress'] = False
+
+# +# Her omdefinerer eg reward scheme: 'win' gir ingen ekstra reward!
 reward_scheme = {'win': 0.0}
 
 ## Create Env:
@@ -33,9 +38,6 @@ global_env = env_interface.Env(EXPERIMENT['fps'],\
                 EXPERIMENT['show_display'])
 print('actions: ', global_env.action_space)
 
-
-
-
 # DETTE SKAL MED VIDARE :::::
 
 # Global time variabel: tid
@@ -45,8 +47,6 @@ tid = 0
 skjerm.print_init_message(EXPERIMENT['time_horizon'],
                         EXPERIMENT['world_side_length'], \
                         1, EXPERIMENT['number_of_creeps'])
-
-file_name = 'forsøk/'
 
 number_of_win_for_p = []
 total_reward_for_p = []
@@ -59,28 +59,28 @@ parts_of_run_completed = 0
 Q_values = []
 Q_values = np.zeros(global_env.action_space_length())
 
-
-
-def step_HAL(green_importance_override =None, red_importance_override =None):
+def step_with_action(action, green_importance_override =None, red_importance_override =None):
     global Q_values, tid
 
     pre_pos = global_env.player_pos() #also to be used for læring ..
     pre_vel = global_env.player_velocity()
 
+    #PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
+    #PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
+    path = PATH_FOR_SITAWARENESS
+        f.create_dataset('position', data=pre_pos)
+        f.create_dataset('speed', data=pre_vel)
+        for the_creep in ALL_EOI:
+            f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
+
+    
     # TODO i HAL: reset_all_pri_for(LOKE)
 
     # arrow_valence = 0
 
     # tilnærming: for kvar EoI, endre prioritet for pos til EoI til valence til EoI (dvs. plusse på denne). 
 
-
-        # VIRKER SOM OM [OVC] er generellt 3X så hoeg som [PC}: hack-test: dobler PC value function:
-        Q_values = np.nansum([FACTOR_FOR_Loke_VALUE_FUNCTION*Q_values_LOKE, Q_values_s], 0)
-        if tid%100 == 0:
-            print('\n\n_**SpeedPos*__ ', tid)
-
-
-        Q_values = no.zeros(5)
+        Q_values = np.zeros(5)
 
         # TODO (prøv å) LESE-UT-FRA-FIL -> legge til dette i Q_values
 
@@ -112,11 +112,62 @@ def env_step_with_a(action):
     # INCREASE TIME
     tid += 1
 
+def print_init_message( game_time_horizon, \
+                        world_side_length, \
+                        number_of_creeps):
+    print('')
+    print('#Starting game with:')
+    print('#    -> game_time_horizon: ', game_time_horizon, \
+        ' iterations')
+    print('#    -> board size (each axis): ', world_side_length)
+        ' tiles per axis')
+    print('#    -> and ', number_of_creeps, ' mumber of creeps):')
+
+def log_overview_message(number_of_win_for_p, total_reward_for_p,
+        game_time_horizon, world_side_length,
+        number_of_creeps, N_hits_for_p):
+    print('************************************************************')
+    print('************************************************************')
+    print('')
+    print('Number of game resets: ', sum(number_of_win_for_p))
+    print('')
+    print('************************************************************')
+    print('************************************************************')
+    print('')
+    print('Total reward for percentage: ', total_reward_for_p)
+
+    summed_total_reward = 0
+    for item in total_reward_for_p:
+        # print(item)
+        summed_total_reward += item
+
+
+    print('')
+    print('SUMMED UP (for game with ',
+            game_time_horizon, ' iterations,',
+            ' board size = ', world_side_length,
+            ' and ', number_of_creeps, ' mumber of creeps):')
+    print('TOTAL Reward: ', end='')
+    print(summed_total_reward)
+    print('TOTAL Win:    ', sum(number_of_win_for_p))
+    print('')
+    print('************************************************************')
+    print('************************************************************')
+    print('Number of red/green hits:')
+    print('    -> Red:   ', sum(N_hits_for_p['red']))
+    print('    -> Green: ', sum(N_hits_for_p['green']))
+    print('')
+
+
 def main():
     global tid
+    print_init_message(
     for t in range(EXPERIMENT['time_horizon']):
         # step_PL_agent()
         step_external_Q_input()
+
+    #HUGS : funksjonen log_overview_message(number_of_win_for_p, total_reward_for_p, game_time_horizon, world_side_length, number_of_creeps, N_hits_for_p):
+
 
 if __name__=="__main__":
     main()
