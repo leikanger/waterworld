@@ -1,29 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from perleik import shepherd
-from perleik import daemon as preta # "hungry ghosts" in sanskrit
-from perleik import pixelerate_state as pixl
-from perleik import samsara
-from perleik import environment_interface as env_interface
-from perleik import liveplotter
-from perleik.pixelerate_state import is_nD_array_compatible
-from perleik import misc_functions as aid
-
-from perleik.log_experience import Screen_logger as skjerm
-
 import numpy as np
-import shutil
-import subprocess
-import time # for time.sleep(s)    DU KAN SLETTE DENNE 
-
-import pickle as pkl
 
 from ple import PLE
 from ple.games.waterworld import WaterWorld
-
-import importlib
-import perleik.experiment_setup
-importlib.reload(perleik.experiment_setup)
 
 from perleik.experiment_setup import EXPERIMENT
             # PARAMETERS -- experiment parameters
@@ -61,20 +41,11 @@ print('actions: ', global_env.action_space)
 # Global time variabel: tid
 tid = 0
 
-total_parts = EXPERIMENT['time_horizon']/EXPERIMENT['bin_size_4_digsig']
-
-velocity_range = 250  # 500 # H 200 V 250
-
-epsilon = 0.1
-
 # Logger litt:
 skjerm.print_init_message(EXPERIMENT['time_horizon'],
                         EXPERIMENT['world_side_length'], \
                         1, EXPERIMENT['number_of_creeps'])
 
-# LAGRE LOGG FIL: (skriving til npz etter kjøring. Lagre script fil no
-# fordi eg kommer til å starte fleire kjøringer..)
-# SAVE data for analyzis:
 file_name = 'forsøk/'
 
 number_of_win_for_p = []

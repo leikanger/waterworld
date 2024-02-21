@@ -13,18 +13,20 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +6 environment_inferface.py
+badd +1 environment_inferface.py
 badd +1 manual_control.py
 badd +1 serialize.py
 badd +1 test_serial.py
 badd +3 test_serial.jl
 badd +3 interface_testing/test_serial.jl
 badd +1 interface_testing/test_serial.py
+badd +0 intelligence_samsara_waterworld.py
 argglobal
 %argdel
 $argadd environment_inferface.py
 $argadd manual_control.py
 set stal=2
+tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabrewind
@@ -64,6 +66,28 @@ normal! zt
 keepjumps 1
 normal! 028|
 tabnext
+edit intelligence_samsara_waterworld.py
+argglobal
+if bufexists(fnamemodify("intelligence_samsara_waterworld.py", ":p")) | buffer intelligence_samsara_waterworld.py | else | edit intelligence_samsara_waterworld.py | endif
+if &buftype ==# 'terminal'
+  silent file intelligence_samsara_waterworld.py
+endif
+balt manual_control.py
+setlocal fdm=marker
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=10
+setlocal fen
+let s:l = 51 - ((50 * winheight(0) + 38) / 77)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 51
+normal! 0
+tabnext
 edit test_serial.py
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
@@ -81,8 +105,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 91 + 91) / 182)
-exe 'vert 2resize ' . ((&columns * 90 + 91) / 182)
+exe 'vert 1resize ' . ((&columns * 94 + 94) / 188)
+exe 'vert 2resize ' . ((&columns * 93 + 94) / 188)
 argglobal
 1argu
 if bufexists(fnamemodify("test_serial.py", ":p")) | buffer test_serial.py | else | edit test_serial.py | endif
@@ -103,7 +127,7 @@ if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 1
-normal! 013|
+normal! 011|
 wincmd w
 argglobal
 1argu
@@ -127,9 +151,8 @@ normal! zt
 keepjumps 3
 normal! 0
 wincmd w
-2wincmd w
-exe 'vert 1resize ' . ((&columns * 91 + 91) / 182)
-exe 'vert 2resize ' . ((&columns * 90 + 91) / 182)
+exe 'vert 1resize ' . ((&columns * 94 + 94) / 188)
+exe 'vert 2resize ' . ((&columns * 93 + 94) / 188)
 tabnext 3
 set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
