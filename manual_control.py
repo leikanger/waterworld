@@ -72,16 +72,6 @@ def external_control(green_importance_override =None, red_importance_override =N
 
     Q_values = np.zeros(global_env.action_space_length())
 
-    pre_pos = global_env.player_pos() #also to be used for læring ..
-    pre_vel = global_env.player_velocity()
-
-    #PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
-    #PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
-    with h5py.File(PATH_FOR_SITAWARENESS, 'w') as f:
-        f.create_dataset('position', data=pre_pos)
-        f.create_dataset('speed', data=pre_vel)
-    print(pre_pos)
-
     #for the_creep in ALL_EOI:
     #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
     #}}}
@@ -128,6 +118,17 @@ def get_key_pressed(): #{{{
     return action; 
 
     #}}}
+def report_situation():
+    #PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
+    #PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
+
+    pre_pos = global_env.player_pos() #also to be used for læring ..
+    pre_vel = global_env.player_velocity()
+
+    with h5py.File(PATH_FOR_SITAWARENESS, 'w') as f:
+        f.create_dataset('position', data=pre_pos)
+        f.create_dataset('speed', data=pre_vel)
+
 
 def main():
     global action
@@ -138,6 +139,8 @@ def main():
     total_parts = run['total_parts']
     for tid in range(game_time_horizon):
         check_divide_log_new_part(tid);
+    
+        report_situation();
 
         key = get_key_pressed()
 
