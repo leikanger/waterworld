@@ -50,11 +50,10 @@ N_hits_for_p['red'] = []
 N_hits_for_p['green'] = []
 parts_of_run_completed = 0
 
-Q_values = []
-Q_values = np.zeros(global_env.action_space_length())
+def external_control(green_importance_override =None, red_importance_override =None):
+    global tid
 
-def step_external_control(green_importance_override =None, red_importance_override =None):
-    global Q_values, tid
+    Q_values = np.zeros(global_env.action_space_length())
 
     pre_pos = global_env.player_pos() #also to be used for læring ..
     pre_vel = global_env.player_velocity()
@@ -64,6 +63,7 @@ def step_external_control(green_importance_override =None, red_importance_overri
     with h5py.File(PATH_FOR_SITAWARENESS, 'w') as f:
         f.create_dataset('position', data=pre_pos)
         f.create_dataset('speed', data=pre_vel)
+    print(pre_pos)
 
     #for the_creep in ALL_EOI:
     #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
@@ -101,7 +101,7 @@ def step_external_control(green_importance_override =None, red_importance_overri
 #   # (loggfør reward og hits og seirar osv.)
 #}}}
 
-def print_init_message( game_time_horizon, \
+def print_init_message( game_time_horizon, \ #{{{
                         world_side_length, \
                         number_of_creeps):
     print('')
@@ -110,15 +110,14 @@ def print_init_message( game_time_horizon, \
         ' iterations')
     print('#    -> board size (each axis): ', world_side_length)
     print('#    -> and ', number_of_creeps, ' mumber of creeps):')
-
-
-def env_step_with_a(action):
+#}}}
+def env_step_with_a(action): #{{{
     global tid
     reward = global_env.p.act(action)
 
     # INCREASE TIME
     tid += 1
-
+#}}}
 
 def main():
     # Logger litt:
