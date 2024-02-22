@@ -72,10 +72,10 @@ def external_control(green_importance_override =None, red_importance_override =N
 
     Q_values = np.zeros(global_env.action_space_length())
 
-    #for the_creep in ALL_EOI:
-    #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
-    #}}}
+    # TODO Read H5 from file /temp/all-Q-values-eller-noke
+    
     return global_env.action_space[4]
+    #}}}
 
 def check_divide_log_new_part(tid): #{{{
     if global_env.p.game_over():
@@ -121,13 +121,27 @@ def get_key_pressed(): #{{{
 def report_situation():
     #PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
     #PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
-
+    
+    all_eoi = []
     pre_pos = global_env.player_pos() #also to be used for læring ..
     pre_vel = global_env.player_velocity()
+
+    positive_eoi = global_env.get_creep_positions('GOOD');
+    #for elem in positive_eoi:
+    #    all_eoi.append( (1.0, elem) )
+
+    negative_eoi = global_env.get_creep_positions('BAD');
+    #print(all_eoi)
+
+    #for the_creep in ALL_EOI:
+    #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
 
     with h5py.File(PATH_FOR_SITAWARENESS, 'w') as f:
         f.create_dataset('position', data=pre_pos)
         f.create_dataset('speed', data=pre_vel)
+        f.create_dataset('positive_eoi', data=positive_eoi)
+        f.create_dataset('negative_eoi', data=negative_eoi)
+        # f.create_dataset('all_eoi', data=all_eoi)
 
 
 def main():
