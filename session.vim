@@ -3,6 +3,7 @@ let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-
 let v:this_session=expand("<sfile>:p")
 silent only
 silent tabonly
+cd ~/arbeider/progging/waterworld.py
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
@@ -19,13 +20,12 @@ badd +1 test_serial.py
 badd +3 test_serial.jl
 badd +3 interface_testing/test_serial.jl
 badd +1 interface_testing/test_serial.py
-badd +0 intelligence_samsara_waterworld.py
+badd +72 intelligence_samsara_waterworld.py
 argglobal
 %argdel
 $argadd environment_inferface.py
 $argadd manual_control.py
 set stal=2
-tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabrewind
@@ -58,34 +58,14 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=10
 setlocal fen
-let s:l = 1 - ((0 * winheight(0) + 38) / 77)
+31
+normal! zo
+let s:l = 31 - ((30 * winheight(0) + 38) / 77)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 028|
-tabnext
-edit intelligence_samsara_waterworld.py
-argglobal
-if bufexists(fnamemodify("intelligence_samsara_waterworld.py", ":p")) | buffer intelligence_samsara_waterworld.py | else | edit intelligence_samsara_waterworld.py | endif
-if &buftype ==# 'terminal'
-  silent file intelligence_samsara_waterworld.py
-endif
-balt manual_control.py
-setlocal fdm=marker
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=10
-setlocal fen
-let s:l = 51 - ((50 * winheight(0) + 38) / 77)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 51
-normal! 0
+keepjumps 31
+normal! 02|
 tabnext
 edit test_serial.py
 let s:save_splitbelow = &splitbelow
@@ -152,7 +132,7 @@ normal! 0
 wincmd w
 exe 'vert 1resize ' . ((&columns * 94 + 94) / 188)
 exe 'vert 2resize ' . ((&columns * 93 + 94) / 188)
-tabnext 3
+tabnext 2
 set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

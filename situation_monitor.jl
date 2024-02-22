@@ -1,27 +1,3 @@
-using HDF5
-
-case_data = [.1, .2, .4, .1]
-
-PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
-    #PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
-
-path = "/tmp/liaison.h5";
-# file = File(format"JLD2", path)
-
-h5open(path, "w") do file
-	write(file, "mydataset", case_data)
-end
-
-function write_new_q_vector(path::String, data::Vector{Float64})
-	h5open(path, "w") do file
-		write(file, "Q-values", data)
-	end
-end
-
-
-write_new_q_vector("/tmp/liaison.h5", [1.,1.,1.,1.])
-
-
 
 using HDF5
 PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"

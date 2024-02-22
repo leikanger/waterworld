@@ -69,37 +69,6 @@ def external_control(green_importance_override =None, red_importance_override =N
     #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
 
 
-# {{{   
-#   # TODO i HAL: reset_all_pri_for(LOKE)
-
-#   # arrow_valence = 0
-
-#   # tilnærming: for kvar EoI, endre prioritet for pos til EoI til valence til EoI (dvs. plusse på denne). 
-
-#       Q_values = np.zeros(5)
-
-#       # TODO (prøv å) LESE-UT-FRA-FIL -> legge til dette i Q_values
-
-#       # OBS: Dersom alt er null, velg NOOP.  Ellers: argmax.
-#       if sum(Q_values) == 0 
-#           action_id = Q_values[5] # noop
-#       else:
-#           action_id = np.argmax(Q_values[0:4])
-
-
-#   # EFFECTUATE!
-#   # TODO  1   les ut Q-vector fra fil. HDF5. Dersom ingen fil eller oppdatering, lagre verdi [0,0,0,0,0.001] -->
-#                   # med at 5-eren betyr noop
-#   # TODO  2   velg action for denne action_id
-#   # TODO 3    Velg rett action til å sende til env:
-#       action = global_env.action_space[action_id]
-#   # TODO 4    Effektuer --> kun sende denne til env utan å bry seg om returverdi / reward:
-#       env_step_with_a(action)
-#   # TODO 5    Tilbakemelding for læring: skrive til fil ved HDF5 serialisering: egen posisjon og hastighet held.
-#           # TODO update_state_to_agent(file, state-data) ELLER NOKE
-
-#   # (loggfør reward og hits og seirar osv.)
-#}}}
 
 def print_init_message( game_time_horizon, \ #{{{
                         world_side_length, \
