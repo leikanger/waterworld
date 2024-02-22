@@ -17,14 +17,13 @@ NUMBER_OF_CREEPS = 4
 PRINT_PROGRESS = False
 # from perleik.experiment_setup import EXPERIMENT
 # PARAMETERS -- experiment parameters
-config['EXPERIMENT'] = {}       # TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-fps = 50
-EXPERIMENT['time_horizon'] = TIME_HORIZON
+EXPERIMENT = {}  # Lagar ein dict, Python style.
+EXPERIMENT['number_of_creeps'] = 4
+EXPERIMENT['time_horizon'] = 10000
 EXPERIMENT['fps'] = 50
-EXPERIMENT['bin_size_4_digsig'] = int(fps/5)  # '10'
+EXPERIMENT['bin_size_4_digsig'] = int(EXPERIMENT['fps']/5)  # '10'
 EXPERIMENT['show_display'] = True
 EXPERIMENT['world_side_length'] = 250
-EXPERIMENT['number_of_creeps'] = 4
 EXPERIMENT['print_progress'] = False
 
 # +# Her omdefinerer eg reward scheme: 'win' gir ingen ekstra reward!
@@ -43,11 +42,6 @@ print('actions: ', global_env.action_space)
 # Global time variabel: tid
 tid = 0
 
-# Logger litt:
-skjerm.print_init_message(EXPERIMENT['time_horizon'],
-                        EXPERIMENT['world_side_length'], \
-                        1, EXPERIMENT['number_of_creeps'])
-
 number_of_win_for_p = []
 total_reward_for_p = []
 
@@ -59,7 +53,7 @@ parts_of_run_completed = 0
 Q_values = []
 Q_values = np.zeros(global_env.action_space_length())
 
-def step_with_action(action, green_importance_override =None, red_importance_override =None):
+def step_external_control(green_importance_override =None, red_importance_override =None):
     global Q_values, tid
 
     pre_pos = global_env.player_pos() #also to be used for læring ..
@@ -67,50 +61,45 @@ def step_with_action(action, green_importance_override =None, red_importance_ove
 
     #PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
     #PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
-    path = PATH_FOR_SITAWARENESS
+    with h5py.File(PATH_FOR_SITAWARENESS, 'w') as f:
         f.create_dataset('position', data=pre_pos)
         f.create_dataset('speed', data=pre_vel)
-        for the_creep in ALL_EOI:
-            f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
 
-    
-    # TODO i HAL: reset_all_pri_for(LOKE)
-
-    # arrow_valence = 0
-
-    # tilnærming: for kvar EoI, endre prioritet for pos til EoI til valence til EoI (dvs. plusse på denne). 
-
-        Q_values = np.zeros(5)
-
-        # TODO (prøv å) LESE-UT-FRA-FIL -> legge til dette i Q_values
-
-        # OBS: Dersom alt er null, velg NOOP.  Ellers: argmax.
-        if sum(Q_values) == 0 
-            action_id = Q_values[5] # noop
-        else:
-            action_id = np.argmax(Q_values[0:4])
+    #for the_creep in ALL_EOI:
+    #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
 
 
-    # EFFECTUATE!
-    # TODO  1   les ut Q-vector fra fil. HDF5. Dersom ingen fil eller oppdatering, lagre verdi [0,0,0,0,0.001] -->
-                    # med at 5-eren betyr noop
-    # TODO  2   velg action for denne action_id
-    # TODO 3    Velg rett action til å sende til env:
-        action = global_env.action_space[action_id]
-    # TODO 4    Effektuer --> kun sende denne til env utan å bry seg om returverdi / reward:
-        env_step_with_a(action)
-    # TODO 5    Tilbakemelding for læring: skrive til fil ved HDF5 serialisering: egen posisjon og hastighet held.
-            # TODO update_state_to_agent(file, state-data) ELLER NOKE
+# {{{   
+#   # TODO i HAL: reset_all_pri_for(LOKE)
 
-    # (loggfør reward og hits og seirar osv.)
+#   # arrow_valence = 0
+
+#   # tilnærming: for kvar EoI, endre prioritet for pos til EoI til valence til EoI (dvs. plusse på denne). 
+
+#       Q_values = np.zeros(5)
+
+#       # TODO (prøv å) LESE-UT-FRA-FIL -> legge til dette i Q_values
+
+#       # OBS: Dersom alt er null, velg NOOP.  Ellers: argmax.
+#       if sum(Q_values) == 0 
+#           action_id = Q_values[5] # noop
+#       else:
+#           action_id = np.argmax(Q_values[0:4])
 
 
-def env_step_with_a(action):
-    global tid
-    reward = global_env.p.act(action)
+#   # EFFECTUATE!
+#   # TODO  1   les ut Q-vector fra fil. HDF5. Dersom ingen fil eller oppdatering, lagre verdi [0,0,0,0,0.001] -->
+#                   # med at 5-eren betyr noop
+#   # TODO  2   velg action for denne action_id
+#   # TODO 3    Velg rett action til å sende til env:
+#       action = global_env.action_space[action_id]
+#   # TODO 4    Effektuer --> kun sende denne til env utan å bry seg om returverdi / reward:
+#       env_step_with_a(action)
+#   # TODO 5    Tilbakemelding for læring: skrive til fil ved HDF5 serialisering: egen posisjon og hastighet held.
+#           # TODO update_state_to_agent(file, state-data) ELLER NOKE
 
-    # INCREASE TIME
-    tid += 1
+#   # (loggfør reward og hits og seirar osv.)
+#}}}
 
 def print_init_message( game_time_horizon, \
                         world_side_length, \
@@ -120,51 +109,27 @@ def print_init_message( game_time_horizon, \
     print('#    -> game_time_horizon: ', game_time_horizon, \
         ' iterations')
     print('#    -> board size (each axis): ', world_side_length)
-        ' tiles per axis')
     print('#    -> and ', number_of_creeps, ' mumber of creeps):')
 
-def log_overview_message(number_of_win_for_p, total_reward_for_p,
-        game_time_horizon, world_side_length,
-        number_of_creeps, N_hits_for_p):
-    print('************************************************************')
-    print('************************************************************')
-    print('')
-    print('Number of game resets: ', sum(number_of_win_for_p))
-    print('')
-    print('************************************************************')
-    print('************************************************************')
-    print('')
-    print('Total reward for percentage: ', total_reward_for_p)
 
-    summed_total_reward = 0
-    for item in total_reward_for_p:
-        # print(item)
-        summed_total_reward += item
+def env_step_with_a(action):
+    global tid
+    reward = global_env.p.act(action)
 
-
-    print('')
-    print('SUMMED UP (for game with ',
-            game_time_horizon, ' iterations,',
-            ' board size = ', world_side_length,
-            ' and ', number_of_creeps, ' mumber of creeps):')
-    print('TOTAL Reward: ', end='')
-    print(summed_total_reward)
-    print('TOTAL Win:    ', sum(number_of_win_for_p))
-    print('')
-    print('************************************************************')
-    print('************************************************************')
-    print('Number of red/green hits:')
-    print('    -> Red:   ', sum(N_hits_for_p['red']))
-    print('    -> Green: ', sum(N_hits_for_p['green']))
-    print('')
+    # INCREASE TIME
+    tid += 1
 
 
 def main():
+    # Logger litt:
+    print_init_message(EXPERIMENT['time_horizon'],
+                    EXPERIMENT['world_side_length'], \
+                    EXPERIMENT['number_of_creeps'])
+
     global tid
-    print_init_message(
     for t in range(EXPERIMENT['time_horizon']):
         # step_PL_agent()
-        step_external_Q_input()
+        step_external_control()
 
     #HUGS : funksjonen log_overview_message(number_of_win_for_p, total_reward_for_p, game_time_horizon, world_side_length, number_of_creeps, N_hits_for_p):
 
