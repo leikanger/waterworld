@@ -26,7 +26,7 @@ log['parts_of_run_completed'] = 0
 log['total_reward'] = 0
 
 PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
-PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
+PATH_FOR_Q_CHANNEL = "/tmp/channel_for_q_value.h5"
 
 # {{{   
 #   # TODO i HAL: reset_all_pri_for(LOKE)
@@ -67,14 +67,23 @@ reward_scheme = {'win': 0.0}
 global_env = env_interface.Env(run['game_fps'], run['world_side_length'],
                                3, run['number_of_creeps'], reward_scheme, True)
 
+"""
+    def external_control()
+        
+returnerer en action som definert av Q-vector overført gjennom PATH_FOR_Q_CHANNEL fra ekstern kontroll.
+"""
 def external_control(green_importance_override =None, red_importance_override =None): #{{{
     global tid
 
-    Q_values = np.zeros(global_env.action_space_length())
+    the_action_id = 4;
+    try: 
+        with h5py.File(PATH_FOR_Q_CHANNEL, 'r') as file:
+            Q_values = file['q_vector']
+            the_action_id = np.argmax(Q_values)
+    except:
+        print("klarte ikkje lese Q-vector fra fil ", PATH_FOR_Q_CHANNEL)
 
-    # TODO Read H5 from file /temp/all-Q-values-eller-noke
-    
-    return global_env.action_space[4]
+    return global_env.action_space[the_action_id]
     #}}}
 
 def check_divide_log_new_part(tid): #{{{
@@ -102,7 +111,7 @@ def toggle_manual_control(): #{{{
 def get_key_pressed(): #{{{
     keys = pygame.key.get_pressed()
     action = 4  # noop? Er dette id eller råverdi? Id 4 er noop
-    if keys[pygame.K_ESCAPE]:
+    if keys[pygame.K_ESCAPE] or keys[pygame.K_q]:
         pygame.quit()
         sys.exit()
     if keys[pygame.K_SPACE]:
@@ -120,7 +129,7 @@ def get_key_pressed(): #{{{
     #}}}
 def report_situation():
     #PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
-    #PATH_FOR_Q_INPUT = "/tmp/new_q_value.h5"
+    #PATH_FOR_Q_CHANNEL = "/tmp/channel_for_q_value.h5"
     
     all_eoi = []
     pre_pos = global_env.player_pos() #also to be used for læring ..
@@ -161,7 +170,6 @@ def main():
         if run['manual_control']:
             action = key;
         else:
-            print(global_env.action_space);
             action = external_control();
 
 

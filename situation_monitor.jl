@@ -1,4 +1,3 @@
-
 using HDF5
 PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
 
@@ -26,6 +25,7 @@ for x in 1:1000
 			#read_accepted = true
 		end
 	catch
+		print("FAILED to read situation awareness: situation_monitor.jl");
 		continue
 	end
 		
