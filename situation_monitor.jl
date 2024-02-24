@@ -1,5 +1,5 @@
 using HDF5
-PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
+PATH_FOR_SITAWARENESS = "/tmp/neoRL/updated_situation.h5"
 
 struct EoI
 	_values::Vector{Float64}
@@ -37,4 +37,7 @@ for x in 1:1000
 end
 	#h5open(path, "r") do file
 	#	println(read(file, "A"
+
+
+close(
 

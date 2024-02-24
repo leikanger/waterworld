@@ -8,6 +8,7 @@ import time
 import numpy as np
 
 import h5py
+import zmq
 
 run = {}
 run['game_fps'] = 16
@@ -25,8 +26,14 @@ log['hits_for_part_number_of_green'] = []
 log['parts_of_run_completed'] = 0
 log['total_reward'] = 0
 
-PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
-PATH_FOR_Q_CHANNEL = "/tmp/channel_for_q_value.h5"
+PATH_FOR_SITAWARENESS =     "/tmp/neoRL/updated_situation.h5"
+PATH_FOR_Q_CHANNEL =        "/tmp/neoRL/channel_for_q_value.h5"
+PATH_FOR_EVENT_REPORTING =  "/tmp/neoRL/new_event.h5"
+NOOP_id = 4;
+# Set opp ZMQ for kommunisering:
+context = zmq.Context()
+socket_for_event_reporting = context.socket(zmq.PUSH)
+socket_for_event_reporting.bind("tcp://*:5555")
 
 # {{{   
 #   # TODO i HAL: reset_all_pri_for(LOKE)
@@ -75,15 +82,16 @@ returnerer en action som definert av Q-vector overført gjennom PATH_FOR_Q_CHANN
 def external_control(green_importance_override =None, red_importance_override =None): #{{{
     global tid
 
-    the_action_id = 4;
+    the_action_id = 4; #=noop
     try: 
         with h5py.File(PATH_FOR_Q_CHANNEL, 'r') as file:
             Q_values = file['q_vector']
+            print("read Q-vector: ", Q_values[:])
             the_action_id = np.argmax(Q_values)
     except:
         print("klarte ikkje lese Q-vector fra fil ", PATH_FOR_Q_CHANNEL)
 
-    return global_env.action_space[the_action_id]
+    return the_action_id
     #}}}
 
 def check_divide_log_new_part(tid): #{{{
@@ -116,14 +124,19 @@ def get_key_pressed(): #{{{
         sys.exit()
     if keys[pygame.K_SPACE]:
         toggle_manual_control();
-    if keys[pygame.K_LEFT]:
-        action = pygame.K_a
-    if keys[pygame.K_RIGHT]:
-        action = pygame.K_d
+        return 4;
     if keys[pygame.K_UP]:
         action = pygame.K_w
+        return 3;
     if keys[pygame.K_DOWN]:
         action = pygame.K_s
+        return 2;
+    if keys[pygame.K_LEFT]:
+        action = pygame.K_a
+        return 0;
+    if keys[pygame.K_RIGHT]:
+        action = pygame.K_d
+        return 1;
     return action; 
 
     #}}}
@@ -136,11 +149,8 @@ def report_situation():
     pre_vel = global_env.player_velocity()
 
     positive_eoi = global_env.get_creep_positions('GOOD');
-    #for elem in positive_eoi:
-    #    all_eoi.append( (1.0, elem) )
 
     negative_eoi = global_env.get_creep_positions('BAD');
-    #print(all_eoi)
 
     #for the_creep in ALL_EOI:
     #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
@@ -152,6 +162,24 @@ def report_situation():
         f.create_dataset('negative_eoi', data=negative_eoi)
         # f.create_dataset('all_eoi', data=all_eoi)
 
+def effectuate(action):
+    #PATH_FOR_EVENT_REPORTING = "/tmp/neoRL/new_event.h5"
+    global NOOP_id
+
+    # TODO Sjekk 
+        # => 'a' slik [with h5py.File(PATH_FOR_EVENT_REPORTING, 'a') as f:]
+
+    # Report all (other than NOOP) actions to channel PATH_FOR_EVENT_REPORTING
+    if action != NOOP_id:
+        # HDF5: 
+        #with h5py.File(PATH_FOR_EVENT_REPORTING, 'a') as f:
+        #    f.create_dataset('new_event', data=action)
+        #    previous_event_was_noop = (action == NOOP_id);
+        print("sender event: ", str(action))
+        socket_for_event_reporting.send_string("eventID:"+str(action));
+        print("ferdig sendt")
+
+    return global_env.p.act(global_env.action_space[action]);
 
 def main():
     global action
@@ -172,8 +200,8 @@ def main():
         else:
             action = external_control();
 
-
-        reward = global_env.p.act(action)
+        # Act/ send action to environment:
+        reward = effectuate(action);
 
         log['total_reward'] += reward
         log['total_reward_for_p'][-1] += reward
