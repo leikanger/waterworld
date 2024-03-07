@@ -161,6 +161,7 @@ def report_situation():
         f.create_dataset('positive_eoi', data=positive_eoi)
         f.create_dataset('negative_eoi', data=negative_eoi)
         # f.create_dataset('all_eoi', data=all_eoi)
+        f.flush()
 
 def effectuate(action):
     #PATH_FOR_EVENT_REPORTING = "/tmp/neoRL/new_event.h5"
@@ -170,14 +171,14 @@ def effectuate(action):
         # => 'a' slik [with h5py.File(PATH_FOR_EVENT_REPORTING, 'a') as f:]
 
     # Report all (other than NOOP) actions to channel PATH_FOR_EVENT_REPORTING
-    if action != NOOP_id:
-        # HDF5: 
-        #with h5py.File(PATH_FOR_EVENT_REPORTING, 'a') as f:
-        #    f.create_dataset('new_event', data=action)
-        #    previous_event_was_noop = (action == NOOP_id);
-        print("sender event: ", str(action))
-        socket_for_event_reporting.send_string("eventID:"+str(action));
-        print("ferdig sendt")
+    #if true action != NOOP_id: # avkommenterer den: tester med noop også.
+    print("sender event: ", str(action))
+    socket_for_event_reporting.send_string("eventID:"+str(action));
+    print("ferdig sendt")
+    #    # HDF5: 
+    #    #with h5py.File(PATH_FOR_EVENT_REPORTING, 'a') as f:
+    #    #    f.create_dataset('new_event', data=action)
+    #    #    previous_event_was_noop = (action == NOOP_id);
 
     return global_env.p.act(global_env.action_space[action]);
 
