@@ -32,40 +32,10 @@ PATH_FOR_EVENT_REPORTING =  "/tmp/neoRL/new_event.h5"
 NOOP_id = 4;
 # Set opp ZMQ for kommunisering:
 context = zmq.Context()
-socket_for_event_reporting = context.socket(zmq.PUSH)
-socket_for_event_reporting.bind("tcp://*:5555")
-
-# {{{   
-#   # TODO i HAL: reset_all_pri_for(LOKE)
-
-#   # arrow_valence = 0
-
-#   # tilnærming: for kvar EoI, endre prioritet for pos til EoI til valence til EoI (dvs. plusse på denne). 
-
-#       Q_values = np.zeros(5)
-
-#       # TODO (prøv å) LESE-UT-FRA-FIL -> legge til dette i Q_values
-
-#       # OBS: Dersom alt er null, velg NOOP.  Ellers: argmax.
-#       if sum(Q_values) == 0 
-#           action_id = Q_values[5] # noop
-#       else:
-#           action_id = np.argmax(Q_values[0:4])
-
-
-#   # EFFECTUATE!
-#   # TODO  1   les ut Q-vector fra fil. HDF5. Dersom ingen fil eller oppdatering, lagre verdi [0,0,0,0,0.001] -->
-#                   # med at 5-eren betyr noop
-#   # TODO  2   velg action for denne action_id
-#   # TODO 3    Velg rett action til å sende til env:
-#       action = global_env.action_space[action_id]
-#   # TODO 4    Effektuer --> kun sende denne til env utan å bry seg om returverdi / reward:
-#       env_step_with_a(action)
-#   # TODO 5    Tilbakemelding for læring: skrive til fil ved HDF5 serialisering: egen posisjon og hastighet held.
-#           # TODO update_state_to_agent(file, state-data) ELLER NOKE
-
-#   # (loggfør reward og hits og seirar osv.)
-#}}}
+#socket_for_event_reporting = context.socket(zmq.PUSH)
+#socket_for_event_reporting.bind("tcp://*:5555")
+socket_for_q_transfer = context.socket(zmq.PULL)
+socket_for_q_transfer.connect("tcp://localhost:5555")
 
 # +# Her definerer eg at 'win' ikkje fører til ekstra reward!
 reward_scheme = {'win': 0.0}
@@ -83,14 +53,26 @@ def external_control(green_importance_override =None, red_importance_override =N
     global tid
 
     the_action_id = 4; #=noop
+        # TODO Motta signalet gjennom SOCKET
+        # s = socket_for_q_transfer.recv_string()
+        # each_part = s.split(', ')
+        # for it in each_part:
+        #     print((it))
+        # print(s)
+    #{{{ Løysing med filer:
     try: 
         with h5py.File(PATH_FOR_Q_CHANNEL, 'r') as file:
             Q_values = file['q_vector']
             print("read Q-vector: ", Q_values[:])
             the_action_id = np.argmax(Q_values)
+            print("id: ", the_action_id)
     except:
         print("klarte ikkje lese Q-vector fra fil ", PATH_FOR_Q_CHANNEL)
+       #}}}
 
+    print("id: ", the_action_id)
+
+    print("SELECTING action : \t", the_action_id)
     return the_action_id
     #}}}
 
@@ -124,7 +106,7 @@ def get_key_pressed(): #{{{
         sys.exit()
     if keys[pygame.K_SPACE]:
         toggle_manual_control();
-        return 4;
+        return;
     if keys[pygame.K_UP]:
         action = pygame.K_w
         return 3;
