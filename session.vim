@@ -13,52 +13,18 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +1 environment_inferface.py
-badd +1 manual_control.py
-badd +1 serialize.py
-badd +1 test_serial.py
-badd +37 test_serial.jl
-badd +3 interface_testing/test_serial.jl
-badd +1 interface_testing/test_serial.py
-badd +72 intelligence_samsara_waterworld.py
-badd +33 situation_monitor.jl
-badd +1 ~/arbeider/peerlearning/perleik/environment_interface.py
-badd +19 ~/arbeider/peerlearning/perleik/action_space.py
-badd +1 agent_mock.jl
-badd +0 ~/arbeider/julia/Hugin.jl/src/Hugin.jl
+badd +9 run.jl
+badd +14 env_waterworld.py
+badd +137 slett.py
 argglobal
 %argdel
-$argadd environment_inferface.py
-$argadd manual_control.py
+$argadd run.jl
+$argadd env_waterworld.py
 set stal=2
 tabnew +setlocal\ bufhidden=wipe
 tabrewind
-edit ~/arbeider/julia/Hugin.jl/src/Hugin.jl
-let s:save_splitbelow = &splitbelow
-let s:save_splitright = &splitright
-set splitbelow splitright
-wincmd _ | wincmd |
-vsplit
-1wincmd h
-wincmd w
-let &splitbelow = s:save_splitbelow
-let &splitright = s:save_splitright
-wincmd t
-let s:save_winminheight = &winminheight
-let s:save_winminwidth = &winminwidth
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
-exe 'vert 1resize ' . ((&columns * 182 + 182) / 364)
-exe 'vert 2resize ' . ((&columns * 181 + 182) / 364)
+edit run.jl
 argglobal
-2argu
-if bufexists(fnamemodify("~/arbeider/julia/Hugin.jl/src/Hugin.jl", ":p")) | buffer ~/arbeider/julia/Hugin.jl/src/Hugin.jl | else | edit ~/arbeider/julia/Hugin.jl/src/Hugin.jl | endif
-if &buftype ==# 'terminal'
-  silent file ~/arbeider/julia/Hugin.jl/src/Hugin.jl
-endif
-balt manual_control.py
 setlocal fdm=marker
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -67,42 +33,20 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=10
 setlocal fen
-let s:l = 23 - ((22 * winheight(0) + 38) / 77)
+let s:l = 9 - ((8 * winheight(0) + 38) / 77)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 23
-normal! 0
-wincmd w
-argglobal
-2argu
-balt ~/arbeider/julia/Hugin.jl/src/Hugin.jl
-setlocal fdm=marker
-setlocal fde=0
-setlocal fmr={{{,}}}
-setlocal fdi=#
-setlocal fdl=0
-setlocal fml=1
-setlocal fdn=10
-setlocal fen
-let s:l = 130 - ((129 * winheight(0) + 38) / 77)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 130
-normal! 04|
-wincmd w
-exe 'vert 1resize ' . ((&columns * 182 + 182) / 364)
-exe 'vert 2resize ' . ((&columns * 181 + 182) / 364)
+keepjumps 9
+normal! 018|
 tabnext
-edit ~/arbeider/peerlearning/perleik/environment_interface.py
+edit env_waterworld.py
 argglobal
-1argu
-if bufexists(fnamemodify("~/arbeider/peerlearning/perleik/environment_interface.py", ":p")) | buffer ~/arbeider/peerlearning/perleik/environment_interface.py | else | edit ~/arbeider/peerlearning/perleik/environment_interface.py | endif
+if bufexists(fnamemodify("env_waterworld.py", ":p")) | buffer env_waterworld.py | else | edit env_waterworld.py | endif
 if &buftype ==# 'terminal'
-  silent file ~/arbeider/peerlearning/perleik/environment_interface.py
+  silent file env_waterworld.py
 endif
-balt manual_control.py
+balt run.jl
 setlocal fdm=marker
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -111,12 +55,14 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=10
 setlocal fen
-let s:l = 72 - ((49 * winheight(0) + 38) / 77)
+101
+normal! zo
+let s:l = 129 - ((97 * winheight(0) + 38) / 77)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 72
-normal! 0
+keepjumps 129
+normal! 02|
 tabnext 1
 set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
