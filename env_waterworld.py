@@ -11,7 +11,7 @@ import zmq
 
 run = {}
 run['game_fps'] = 0 # ved FPS satt til 0, itererer WaterWorld kun etter kall til effectuate(action)
-GAME_FPS = 50
+FPS = 50
 run['world_side_length'] = 550  # 550# 200
 run['number_of_creeps'] = 3
 run['game_time_horizon'] = 20000
@@ -72,10 +72,9 @@ def observe_situation():
     pre_vel = global_env.player_velocity()
 
     positive_eoi = global_env.get_creep_positions('GOOD');
-
     negative_eoi = global_env.get_creep_positions('BAD');
 
-    return (positive_eoi, negative_eoi)
+    return {"pos": pre_pos, "vel": pre_vel, "EoI+": positive_eoi, "EoI-": negative_eoi}
 
 def effectuate(action):
     # Report all (også NOOP) actions to channel         # TODO Treng kanalen oppe å kjøre igjen! TODO
@@ -123,7 +122,7 @@ def main_loop():
 
         for tid in range(run['game_time_horizon']):
             step_control()
-            time.sleep(1/GAME_FPS)
+            time.sleep(1/FPS)
 
         print("FINITO:")
         input('press enter to complete...')
