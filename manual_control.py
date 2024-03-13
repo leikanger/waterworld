@@ -131,11 +131,8 @@ def get_key_pressed(): #{{{
     return action; 
 
     #}}}
-def report_situation():
+def observe_situation():
     global socket_for_event_reporting;
-    #global socket_for_sitaw;
-    #PATH_FOR_SITAWARENESS = "/tmp/updated_situation.h5"
-    #PATH_FOR_Q_CHANNEL = "/tmp/channel_for_q_value.h5"
     
     all_eoi = []
     pre_pos = global_env.player_pos() #also to be used for læring ..
@@ -145,35 +142,28 @@ def report_situation():
 
     negative_eoi = global_env.get_creep_positions('BAD');
 
-    #for the_creep in ALL_EOI:
-    #    f.create_dataset('eoi'NUMMER-X, data=EoI-POSISJON)  
-
-    # TODO Create sitaw reporting with ZMQ TODO
-    #  - Serialisering av python objekt, på en måte som lett kan deserialiseres i julia.
-    #  - :2: Sende over nettverk. 
-
-    #with h5py.File(PATH_FOR_SITAWARENESS, 'w') as f:
-    #    f.create_dataset('position', data=pre_pos)
-    #    f.create_dataset('speed', data=pre_vel)
-    #    f.create_dataset('positive_eoi', data=positive_eoi)
-    #    f.create_dataset('negative_eoi', data=negative_eoi)
-    #    # f.create_dataset('all_eoi', data=all_eoi)
-    #    f.flush()
+    return (positive_eoi, negative_eoi)
 
 def effectuate(action):
-    #PATH_FOR_EVENT_REPORTING = "/tmp/neoRL/new_event.h5"
-
     # Report all (også NOOP) actions to channel
     socket_for_event_reporting.send_string(str(action));
 
-        # HDF5: -------------------------------------------------------------- {{{
-        #        with h5py.File(PATH_FOR_EVENT_REPORTING, 'w') as f:
-        #            f.create_dataset('new_event', data=action)
-        #            previous_event_was_noop = (action == NOOP_id);
-        #            f.flush();
-        # }}}
-
     return global_env.p.act(global_env.action_space[action]);
+
+def step_env(action):
+    check_divide_log_new_part(tid);
+
+    report_situation();
+
+    key = get_key_pressed() 
+
+    if run['manual_control']:
+        action = key;
+    else:
+        action = external_control();
+
+    # Act/ send action to environment:
+    reward = effectuate(action);
 
 async def run_env():
     global action
@@ -184,20 +174,7 @@ async def run_env():
     game_time_horizon = run['game_time_horizon']
     total_parts = run['total_parts']
     for tid in range(game_time_horizon):
-        check_divide_log_new_part(tid);
-    
-        report_situation();
-
-        key = get_key_pressed() 
-
-        if run['manual_control']:
-            action = key;
-        else:
-            action = external_control();
-
-        # Act/ send action to environment:
-        reward = effectuate(action);
-
+        step_env(action)
         log['total_reward'] += reward
         log['total_reward_for_p'][-1] += reward
         if reward > 0:
@@ -211,11 +188,6 @@ async def run_env():
     print("FINITO:")
     input('press enter to complete...')
 
-
-async def test():
-    while True:
-        print("x")
-        await asyncio.sleep(0.5)
 
 async def listener_for_q_message():
     print("FAEN")
