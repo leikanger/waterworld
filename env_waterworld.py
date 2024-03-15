@@ -116,6 +116,7 @@ def broadcast_action(action):
     #    context.destroy();
 #}}}
 
+# Demo-main som kjøres dersom script er kalla for seg sjølv. {{{
 def main_loop():
     try:
         #setup_comm();
@@ -132,3 +133,4 @@ def main_loop():
 
 if __name__=='__main__':
     main_loop();
+#}}}
