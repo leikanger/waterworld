@@ -3,7 +3,7 @@ let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-
 let v:this_session=expand("<sfile>:p")
 silent only
 silent tabonly
-cd ~/arbeider/progging/waterworld
+cd ~/arbeider/waterworld
 if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
@@ -14,9 +14,10 @@ else
   set shortmess=aoO
 endif
 badd +7 run.jl
-badd +77 env_waterworld.py
+badd +81 env_waterworld.py
 badd +137 slett.py
-badd +0 environment_interface.py
+badd +1 environment_interface.py
+badd +45 env_mock.py
 argglobal
 %argdel
 $argadd run.jl
@@ -35,14 +36,55 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=10
 setlocal fen
-let s:l = 7 - ((6 * winheight(0) + 38) / 77)
+let s:l = 7 - ((5 * winheight(0) + 31) / 62)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 7
 normal! 0
 tabnext
-edit env_waterworld.py
+edit env_mock.py
+let s:save_splitbelow = &splitbelow
+let s:save_splitright = &splitright
+set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+1wincmd h
+wincmd w
+let &splitbelow = s:save_splitbelow
+let &splitright = s:save_splitright
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+exe 'vert 1resize ' . ((&columns * 127 + 127) / 255)
+exe 'vert 2resize ' . ((&columns * 127 + 127) / 255)
+argglobal
+if bufexists(fnamemodify("env_mock.py", ":p")) | buffer env_mock.py | else | edit env_mock.py | endif
+if &buftype ==# 'terminal'
+  silent file env_mock.py
+endif
+balt env_waterworld.py
+setlocal fdm=marker
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=10
+setlocal fen
+67
+normal! zo
+let s:l = 45 - ((44 * winheight(0) + 31) / 62)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 45
+normal! 039|
+wincmd w
 argglobal
 if bufexists(fnamemodify("env_waterworld.py", ":p")) | buffer env_waterworld.py | else | edit env_waterworld.py | endif
 if &buftype ==# 'terminal'
@@ -57,14 +99,19 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=10
 setlocal fen
-100
+106
 normal! zo
-let s:l = 125 - ((94 * winheight(0) + 38) / 77)
+126
+normal! zo
+let s:l = 83 - ((16 * winheight(0) + 31) / 62)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 125
-normal! 026|
+keepjumps 83
+normal! 058|
+wincmd w
+exe 'vert 1resize ' . ((&columns * 127 + 127) / 255)
+exe 'vert 2resize ' . ((&columns * 127 + 127) / 255)
 tabnext
 edit environment_interface.py
 argglobal
@@ -81,13 +128,13 @@ setlocal fdl=0
 setlocal fml=1
 setlocal fdn=10
 setlocal fen
-let s:l = 86 - ((72 * winheight(0) + 38) / 77)
+let s:l = 86 - ((58 * winheight(0) + 31) / 62)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 86
 normal! 025|
-tabnext 1
+tabnext 2
 set stal=1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

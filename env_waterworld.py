@@ -66,13 +66,19 @@ def get_key_pressed(): #{{{
     #}}}
 def observe_situation():
     global socket_for_event_reporting;
+
+    scaling_factor = 1/500;
     
     all_eoi = []
-    pre_pos = global_env.player_pos() #also to be used for læring ..
-    pre_vel = global_env.player_velocity()
+    pre_pos = global_env.player_pos() * scaling_factor;
+    pre_vel = global_env.player_velocity() * scaling_factor;
 
-    positive_eoi = global_env.get_creep_positions('GOOD');
-    negative_eoi = global_env.get_creep_positions('BAD');
+    # av type: numpy.ndarray :
+    ##>> <class 'numpy.ndarray'>
+    ##>> [[291.81604577  71.62618017]
+    ##>> [ 54.89175415 322.31641435]]
+    positive_eoi = global_env.get_creep_positions('GOOD') * scaling_factor;
+    negative_eoi = global_env.get_creep_positions('BAD') * scaling_factor;
 
     return {"pos": pre_pos, "vel": pre_vel, "EoI+": positive_eoi, "EoI-": negative_eoi}
 
@@ -116,14 +122,25 @@ def broadcast_action(action):
     #    context.destroy();
 #}}}
 
+største_verdi = [0,0];
 # Demo-main som kjøres dersom script er kalla for seg sjølv. {{{
 def main_loop():
     try:
         #setup_comm();
-
         for tid in range(run['game_time_horizon']):
             step_control()
             time.sleep(1/FPS)
+            if tid%10==0: print("------------------------ tid: ", tid, "-------------------------")
+            print(observe_situation())
+
+            #global største_verdi;
+            #x=data["pos"][0]
+            #if x > største_verdi[0]:
+            #    største_verdi[0] = x
+            #y=data["pos"][1]
+            #if y > største_verdi[1]:
+            #    største_verdi[1] = y
+            #print("STØRSTE: ", største_verdi)
 
         print("FINITO:")
         input('press enter to complete...')

@@ -1,5 +1,5 @@
-using PyCall
 using Hugin
+using PyCall
 pushfirst!(pyimport("sys")."path", "");
 Env = pyimport("env_waterworld");
 
@@ -28,6 +28,7 @@ function main()
 		@async run_main_loop(1000)
 		for i in 1:100 
 			println("ei av hundre uskrifter: " * string(i))
+			@show typeof(Env.observe_situation()["EoI+"])
 			sleep(0.2)
 
 			# Check if there's an exception in the channel
