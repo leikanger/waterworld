@@ -34,7 +34,8 @@ def toggle_manual_control():
     run['manual_control'] = not run['manual_control'];
 
 def get_key_pressed(): 
-    return random.choice(rand(4))
+    return random.choice(range(4));
+    #return random.choice(range(4))
 
 def rand_2d_coord():
     return [rand(), rand()]
