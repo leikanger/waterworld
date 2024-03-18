@@ -27,6 +27,13 @@ log['total_reward'] = 0
 
 NOOP_id = 4;
 
+state = {}
+# {"pos": pre_pos, "vel": pre_vel, "EoI+": positive_eoi, "EoI-": negative_eoi}
+state["pos"] = np.array([]);
+state["vel"] = np.array([]);
+state["EoI+"] = np.array([]); # lagar 2 EoI positive
+state["EoI-"] = np.array([]); # lagar 3 EoI negative
+
 # +# Her definerer eg at 'win' ikkje fører til ekstra reward!
 reward_scheme = {'win': 0.0}
 
@@ -41,24 +48,22 @@ def rand_2d_coord():
     return [rand(), rand()]
 
 def observe_situation():
-    all_eoi = []
-    pre_pos = np.array(rand_2d_coord());
-    pre_vel = np.array(rand_2d_coord());
-
-    positive_eoi = np.array([rand_2d_coord(), rand_2d_coord()]);                   # lagar 2 EoI positive
-    negative_eoi = np.array([rand_2d_coord(), rand_2d_coord(), rand_2d_coord()]);  # lagar 3 EoI negative
-
-    return {"pos": pre_pos, "vel": pre_vel, "EoI+": positive_eoi, "EoI-": negative_eoi}
+    global state
+    return state #{"pos": pre_pos, "vel": pre_vel, "EoI+": positive_eoi, "EoI-": negative_eoi}
 
 def effectuate(action):
+    state["pos"] = np.array(rand_2d_coord());
+    state["vel"] = np.array(rand_2d_coord());
+    state["EoI+"]= np.array([rand_2d_coord(), rand_2d_coord()]);                   # lagar 2 EoI positive
+    state["EoI-"]= np.array([rand_2d_coord(), rand_2d_coord(), rand_2d_coord()]);  # lagar 3 EoI negative
+
+
     # Report all (også NOOP) actions to channel         # TODO Treng kanalen oppe å kjøre igjen! TODO
     broadcast_action(action);
     return 0.0; # REWARD... # global_env.p.act(global_env.action_space[action]);
 
 def step_control(action =NOOP_id):
-    if action != NOOP_id:
-        # Act/ send action to environment:
-        effectuate(action);
+    effectuate(action)
     return observe_situation();
 
 ####### Broadcast performed action ############

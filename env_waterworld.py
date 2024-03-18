@@ -122,8 +122,8 @@ def broadcast_action(action):
     #    context.destroy();
 #}}}
 
-største_verdi = [0,0];
 # Demo-main som kjøres dersom script er kalla for seg sjølv. {{{
+største_verdi = [0,0];
 def main_loop():
     try:
         #setup_comm();
