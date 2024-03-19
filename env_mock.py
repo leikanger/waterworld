@@ -52,11 +52,16 @@ def observe_situation():
     return state #{"pos": pre_pos, "vel": pre_vel, "EoI+": positive_eoi, "EoI-": negative_eoi}
 
 def effectuate(action):
-    state["pos"] = np.array(rand_2d_coord());
-    state["vel"] = np.array(rand_2d_coord());
+    state["pos"] = np.array([0.0, 0.0]);
+    state["vel"] = np.array([0.0, 0.0]);
     state["EoI+"]= np.array([rand_2d_coord(), rand_2d_coord()]);                   # lagar 2 EoI positive
     state["EoI-"]= np.array([rand_2d_coord(), rand_2d_coord(), rand_2d_coord()]);  # lagar 3 EoI negative
 
+    if action == 42: # DENNE ER KUN for å teste argument inn til python agent mock.
+        state["pos"] = np.array([42.0, 42.0]);
+        state["vel"] = np.array([42.0, 42.0]);
+        state["EoI+"]= np.array([]);                # lagar 0 EoI positive
+        state["EoI-"]= np.array([[42.0, 42.0]]);    # lagar 1 EoI negative
 
     # Report all (også NOOP) actions to channel         # TODO Treng kanalen oppe å kjøre igjen! TODO
     broadcast_action(action);
