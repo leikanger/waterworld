@@ -69,7 +69,7 @@ def effectuate(action):
 
 def step_control(action =NOOP_id):
     effectuate(action)
-    return observe_situation();
+    return action;
 
 ####### Broadcast performed action ############
 def broadcast_action(action):

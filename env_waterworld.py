@@ -84,7 +84,6 @@ def observe_situation():
 
 def effectuate(action):
     # Report all (også NOOP) actions to channel         # TODO Treng kanalen oppe å kjøre igjen! TODO
-    broadcast_action(action);
     return global_env.p.act(global_env.action_space[action]);
 
 def step_control(action =NOOP_id):
@@ -98,11 +97,10 @@ def step_control(action =NOOP_id):
 
     # Act/ send action to environment:
     reward = effectuate(action);
-    return observe_situation();
+    return action; # method for reporting what action was taken to Julia.
 
 ####### Broadcast performed action ############
-def broadcast_action(action):
-    return
+#def broadcast_action(action):
 #{{{ Kommentert ut
     #def broadcast_action(action):
     #    return
